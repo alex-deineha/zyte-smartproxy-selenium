@@ -60,7 +60,10 @@ class ZyteModifyRequestsMixin:
 
             raw_rules = []
             for url in block_ads_lists:
-                raw_rules.extend(requests.get(url).text.splitlines())
+                try:
+                    raw_rules.extend(requests.get(url, timeout=10).text.splitlines())
+                except requests.exceptions.ReadTimeout:
+                    pass
             raw_rules = remove_comments_and_html_elements(raw_rules)
             raw_rules = list(set(raw_rules))
             return AdblockRules(raw_rules)
